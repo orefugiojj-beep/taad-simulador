@@ -1,0 +1,282 @@
+/* ===================================================================
+   Simulador TAAD — design tokens
+   Palette grounded in the subject: public-sector study tool, home-care
+   warmth + legal-document precision. Not the generic cream/terracotta
+   or dark/neon defaults — a quiet sage paper, deep pine-teal ink, and
+   a muted ochre accent (like an old institutional stamp).
+   =================================================================== */
+:root{
+  --paper: #F3F5F1;
+  --paper-raised: #FCFDFB;
+  --ink: #16261F;
+  --ink-soft: #4B5A50;
+  --line: #D9DED4;
+  --primary: #2F6B57;
+  --primary-dark: #1F4A3C;
+  --primary-tint: #E4EEE8;
+  --accent: #A6782E;
+  --accent-tint: #F3E8D4;
+  --correct: #2F8F5B;
+  --correct-tint: #E3F2E8;
+  --wrong: #B5453B;
+  --wrong-tint: #FBE8E5;
+  /* Fixed brand-fill pair: intentionally the SAME in light and dark mode.
+     Used for "hero" blocks (buttons, the featured mode card, the result card,
+     the selected-answer marker) that are meant to stay a solid dark-teal fill
+     with light content on top in both themes, instead of inverting along with
+     the page like --primary-dark (which flips light/dark and is for heading
+     TEXT sitting directly on the page background, a different job). */
+  --brand-fill: #1F4A3C;
+  --on-brand-fill: #F3F5F1;
+  --on-brand-fill-soft: #D9E8DF;
+  --on-brand-fill-softer: #BBD9CB;
+  --shadow: 0 1px 2px rgba(22,38,31,.06), 0 6px 20px rgba(22,38,31,.07);
+  --radius-s: 10px;
+  --radius-m: 16px;
+  --radius-l: 22px;
+  --font-display: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper: #0F1713;
+    --paper-raised: #172019;
+    --ink: #EAEFEA;
+    --ink-soft: #A9B6AC;
+    --line: #2B362F;
+    --primary: #5FAE8D;
+    --primary-dark: #BFE3D1;
+    --primary-tint: #1B2B23;
+    --accent: #D2A355;
+    --accent-tint: #2C2518;
+    --correct: #57B885;
+    --correct-tint: #16281E;
+    --wrong: #E08077;
+    --wrong-tint: #2C1A18;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.35);
+  }
+}
+
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-ui);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+h1,h2,h3{ font-family:var(--font-display); font-weight:600; margin:0; }
+p{ margin:0; }
+button{ font-family:inherit; }
+:focus-visible{ outline:2.5px solid var(--accent); outline-offset:2px; }
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+#app{ max-width:640px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+.screen{ flex:1; display:flex; flex-direction:column; padding:20px 20px calc(20px + env(safe-area-inset-bottom)); }
+/* Author-origin CSS beats the UA stylesheet's [hidden]{display:none} at equal specificity,
+   so without this rule every .screen with the `hidden` attribute would still be laid out
+   (display:flex) and visible by scrolling - defeating the PIN gate. This restores "hidden
+   actually hides it", which is what keeps the other screens unreachable before the PIN. */
+.screen[hidden]{ display:none; }
+
+/* ---------- buttons ---------- */
+.btn{
+  appearance:none; border:none; cursor:pointer;
+  font-size:16px; font-weight:600; font-family:var(--font-ui);
+  padding:14px 20px; border-radius:var(--radius-s);
+  transition: transform .12s ease, background-color .15s ease, opacity .15s ease;
+}
+.btn:active{ transform: scale(.98); }
+.btn-primary{ background:var(--brand-fill); color:var(--on-brand-fill); }
+.btn-primary:hover{ background:var(--primary); }
+.btn-primary:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+.btn-ghost{ background:transparent; color:var(--ink); border:1.5px solid var(--line); }
+.btn-ghost:disabled{ opacity:.35; cursor:not-allowed; }
+.btn-text{ background:transparent; color:var(--ink-soft); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
+.btn-block{ width:100%; }
+.icon-btn{
+  appearance:none; border:none; background:var(--paper-raised); color:var(--ink-soft);
+  width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; border:1px solid var(--line);
+}
+
+/* ===================================================================
+   PIN screen
+   =================================================================== */
+.screen-pin{ align-items:center; justify-content:center; }
+.pin-card{ width:100%; max-width:320px; text-align:center; }
+.pin-icon{
+  width:72px; height:72px; margin:0 auto 18px; border-radius:50%;
+  background:var(--brand-fill); color:var(--on-brand-fill);
+  display:flex; align-items:center; justify-content:center;
+}
+.pin-title{ font-size:26px; color:var(--primary-dark); }
+.pin-subtitle{ margin-top:6px; color:var(--ink-soft); font-size:14.5px; }
+#pin-form{ margin-top:28px; }
+.pin-input{
+  width:100%; text-align:center; font-size:30px; letter-spacing:14px;
+  padding:14px 10px 14px 24px; border-radius:var(--radius-s);
+  border:1.5px solid var(--line); background:var(--paper-raised); color:var(--ink);
+  font-family:var(--font-ui);
+}
+.pin-input:focus{ border-color:var(--primary); }
+.pin-error{
+  min-height:20px; color:var(--wrong); font-size:14px; margin:10px 0 14px; font-weight:600;
+}
+.pin-card.shake{ animation: shake .4s; }
+@keyframes shake{
+  10%,90%{ transform:translateX(-1px); }
+  20%,80%{ transform:translateX(2px); }
+  30%,50%,70%{ transform:translateX(-5px); }
+  40%,60%{ transform:translateX(5px); }
+}
+
+/* ===================================================================
+   Top bar (shared)
+   =================================================================== */
+.top-bar{ display:flex; align-items:center; justify-content:space-between; padding-top:4px; }
+.top-bar-title{ font-family:var(--font-display); font-weight:600; font-size:18px; color:var(--primary-dark); }
+
+/* ===================================================================
+   Mode select screen
+   =================================================================== */
+.modes-intro{ margin:22px 0 22px; }
+.modes-intro h1{ font-size:28px; color:var(--ink); }
+.modes-subtitle{ margin-top:6px; color:var(--ink-soft); font-size:15px; }
+
+.mode-real{
+  background:var(--brand-fill); color:var(--on-brand-fill);
+  border-radius:var(--radius-l); padding:24px; margin-bottom:16px;
+  box-shadow:var(--shadow); cursor:pointer; border:none; text-align:left; width:100%;
+}
+.mode-real:active{ transform:scale(.99); }
+.mode-real-label{ font-family:var(--font-display); font-size:22px; font-weight:600; }
+.mode-real-desc{ margin-top:8px; color:var(--on-brand-fill-soft); font-size:14.5px; line-height:1.5; max-width:46ch; }
+.mode-real-meta{ margin-top:16px; display:flex; gap:18px; font-size:13.5px; color:var(--on-brand-fill-softer); }
+.mode-real-meta b{ color:var(--on-brand-fill); font-weight:700; }
+
+.modes-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.mode-tile{
+  background:var(--paper-raised); border:1.5px solid var(--line); border-radius:var(--radius-m);
+  padding:16px; text-align:left; cursor:pointer;
+}
+.mode-tile:active{ transform:scale(.98); }
+.mode-tile-label{ font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--ink); }
+.mode-tile-meta{ margin-top:6px; font-size:13px; color:var(--ink-soft); }
+
+.modes-footnote{ margin-top:22px; color:var(--ink-soft); font-size:13px; line-height:1.5; }
+
+/* ===================================================================
+   Quiz screen
+   =================================================================== */
+.quiz-header{ position:sticky; top:0; background:var(--paper); padding-top:4px; padding-bottom:10px; z-index:5; }
+.quiz-header-top{ display:flex; align-items:center; gap:10px; }
+.quiz-mode-name{ flex:1; font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--primary-dark); }
+.timer{
+  font-variant-numeric:tabular-nums; font-weight:700; font-size:16px;
+  background:var(--primary-tint); color:var(--primary-dark);
+  padding:6px 12px; border-radius:999px;
+}
+.timer.timer-warn{ background:var(--accent-tint); color:var(--accent); }
+.timer.timer-danger{ background:var(--wrong-tint); color:var(--wrong); }
+.quiz-progress{ margin-top:12px; font-size:13.5px; color:var(--ink-soft); }
+
+.palette{ margin-top:10px; display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+.palette-item{
+  flex:0 0 auto; width:30px; height:30px; border-radius:8px; border:1.5px solid var(--line);
+  background:var(--paper-raised); color:var(--ink-soft); font-size:12.5px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.palette-item.answered{ background:var(--primary-tint); border-color:var(--primary); color:var(--primary-dark); }
+.palette-item.current{ outline:2.5px solid var(--accent); outline-offset:1.5px; }
+
+.quiz-body{ flex:1; padding-top:20px; }
+.question-tag{ font-size:13px; color:var(--accent); font-weight:600; }
+.question-text{
+  margin-top:8px; font-size:21px; line-height:1.4; color:var(--ink); font-weight:600;
+}
+.options{ margin-top:22px; display:flex; flex-direction:column; gap:10px; }
+.option{
+  display:flex; align-items:flex-start; gap:12px; text-align:left;
+  background:var(--paper-raised); border:1.5px solid var(--line); border-radius:var(--radius-m);
+  padding:14px 16px; cursor:pointer; font-size:15.5px; line-height:1.45; color:var(--ink);
+}
+.option:active{ transform:scale(.995); }
+.option-marker{
+  flex:0 0 auto; width:24px; height:24px; border-radius:50%; border:1.5px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700;
+  color:var(--ink-soft); margin-top:1px;
+}
+.option.selected{ border-color:var(--primary); background:var(--primary-tint); }
+.option.selected .option-marker{ background:var(--brand-fill); border-color:var(--brand-fill); color:var(--on-brand-fill); }
+
+.quiz-footer{ display:flex; align-items:center; gap:10px; padding-top:18px; }
+.quiz-footer .btn-text{ flex:1; text-align:center; }
+
+/* ===================================================================
+   Result screen
+   =================================================================== */
+.result-hero{
+  background:var(--brand-fill); color:var(--on-brand-fill); border-radius:var(--radius-l);
+  padding:28px 24px; text-align:center; margin-top:4px;
+}
+.result-mode{ font-size:13.5px; color:var(--on-brand-fill-softer); font-weight:600; }
+.result-score{ font-family:var(--font-display); font-size:52px; font-weight:700; margin-top:6px; }
+.result-scale{ margin-top:4px; font-size:16px; color:var(--on-brand-fill-soft); }
+.result-status{ display:inline-block; margin-top:14px; padding:6px 16px; border-radius:999px; font-weight:700; font-size:13.5px; }
+.result-status.pass{ background:var(--correct-tint); color:var(--correct); }
+.result-status.fail{ background:var(--wrong-tint); color:var(--wrong); }
+.result-meta{ margin-top:12px; font-size:13.5px; color:var(--on-brand-fill-softer); }
+.result-hero .btn-primary{ margin-top:20px; background:var(--on-brand-fill); color:var(--brand-fill); }
+.result-hero .btn-primary:hover{ background:#fff; }
+
+.review-heading{ margin-top:28px; font-size:18px; color:var(--ink); }
+.review-note{ margin-top:6px; font-size:12.5px; color:var(--ink-soft); line-height:1.5; }
+.review-list{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+.review-item{ border:1.5px solid var(--line); border-radius:var(--radius-m); padding:16px; background:var(--paper-raised); }
+.review-item-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+.review-tag{ font-size:12.5px; color:var(--accent); font-weight:600; flex:1 1 auto; min-width:0; line-height:1.4; }
+.review-flag{ font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; flex:0 0 auto; }
+.review-flag.ok{ background:var(--correct-tint); color:var(--correct); }
+.review-flag.bad{ background:var(--wrong-tint); color:var(--wrong); }
+.review-q{ margin-top:6px; font-size:15.5px; font-weight:600; line-height:1.4; }
+.review-answers{ margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:14px; }
+.review-answer-row{ display:flex; gap:8px; }
+.review-answer-row .lab{ color:var(--ink-soft); flex:0 0 auto; }
+.review-answer-row.correct .val{ color:var(--correct); font-weight:600; }
+.review-answer-row.incorrect .val{ color:var(--wrong); font-weight:600; }
+.review-explanation{ margin-top:10px; font-size:13.5px; color:var(--ink-soft); line-height:1.5; border-top:1px dashed var(--line); padding-top:10px; }
+
+/* ===================================================================
+   Confirm modal (replaces native confirm()/alert())
+   =================================================================== */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(13,23,18,.52);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; z-index:50;
+}
+.modal-overlay[hidden]{ display:none; }
+.modal-card{
+  width:100%; max-width:360px; background:var(--paper-raised);
+  border-radius:var(--radius-l); padding:24px; box-shadow:var(--shadow);
+}
+.modal-card h3{ font-size:19px; color:var(--ink); }
+.modal-card p{ margin-top:10px; font-size:14.5px; color:var(--ink-soft); line-height:1.5; }
+.modal-actions{ margin-top:22px; display:flex; flex-direction:column; gap:10px; }
+.modal-actions .btn{ width:100%; text-align:center; }
+@media (min-width:420px){
+  .modal-actions{ flex-direction:row-reverse; }
+}
+
+/* ===================================================================
+   Small screens
+   =================================================================== */
+@media (max-width:380px){
+  .modes-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+  .result-score{ font-size:44px; }
+  .question-text{ font-size:19px; }
+}
