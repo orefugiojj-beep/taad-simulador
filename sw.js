@@ -1,8 +1,10 @@
 // Simulador TAAD — service worker: cache-first, para funcionar 100% offline
-// depois da primeira visita. Sobe o número da versão sempre que
-// publicares um questions.enc.js novo, para os telemóveis já instalados
-// irem buscar a versão atualizada.
-const CACHE_NAME = "simulador-taad-v1";
+// depois da primeira visita.
+//
+// IMPORTANTE: sempre que publicares ficheiros novos (sobretudo um questions.enc.js novo),
+// sobe o número da versão aqui em baixo (v2 -> v3 -> v4 ...). Assim os telemóveis que já
+// têm a app instalada vão buscar a versão nova em vez de continuarem com a antiga em cache.
+const CACHE_NAME = "simulador-taad-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -17,7 +19,8 @@ const ASSETS = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(ASSETS))
+      // cache:"reload" ignora a cache HTTP do navegador, para guardar mesmo a versão acabada de publicar
+      .then((cache) => cache.addAll(ASSETS.map((u) => new Request(u, { cache: "reload" }))))
       .then(() => self.skipWaiting())
   );
 });
@@ -33,17 +36,18 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((response) => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.match(event.request, { ignoreSearch: true }).then((cached) => {
+        const network = fetch(event.request)
+          .then((response) => {
+            if (response && response.ok && new URL(event.request.url).origin === self.location.origin) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          })
+          .catch(() => cached);
+        return cached || network;
+      })
+    )
   );
 });

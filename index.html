@@ -53,7 +53,8 @@
     </div>
     <div id="mode-real-slot"></div>
     <div class="modes-grid" id="modes-grid"></div>
-    <p class="modes-footnote">Cada pergunta cita o diploma de origem. No fim do teste vês a correção completa, artigo a artigo.</p>
+    <div id="mode-livre-slot"></div>
+    <p class="modes-footnote">No fim do teste vês a correção completa: a legislação, o artigo e a página onde está cada resposta. Nos Treinos e no modo Livre, antes de responderes a algumas perguntas, indicas em que legislação achas que está a resposta (é só um palpite e não conta para a nota). No modo Livre não há limite de perguntas nem de tempo: o cronómetro conta o tempo que usas e, no fim, compara-o com o ritmo da prova real (120 minutos a dividir pelas 25 perguntas, 4 min 48 s por pergunta).</p>
   </section>
 
   <!-- ===== Quiz screen ===== -->
@@ -70,9 +71,17 @@
       <div class="palette" id="palette"></div>
     </header>
     <main class="quiz-body">
-      <p class="question-tag" id="question-tag">—</p>
       <h2 class="question-text" id="question-text">—</h2>
-      <div class="options" id="options"></div>
+
+      <!-- Só nos Treinos e no modo Livre, em perguntas que não nomeiam a legislação -->
+      <div class="guess-box" id="guess-box" hidden>
+        <p class="guess-title">Em que legislação está a resposta?</p>
+        <p class="guess-sub">Palpite de treino: não conta para a nota. A escolha fica fechada e vês logo se acertaste.</p>
+        <div class="guess-chips" id="guess-chips" role="group" aria-label="Legislações de consulta"></div>
+        <p class="guess-verdict" id="guess-verdict" role="status" aria-live="polite" hidden></p>
+      </div>
+
+      <div class="options" id="options" role="group" aria-label="Opções de resposta"></div>
     </main>
     <footer class="quiz-footer">
       <button id="btn-prev" class="btn btn-ghost">Anterior</button>
@@ -89,10 +98,33 @@
       <div class="result-scale" id="result-scale">0,00 valores</div>
       <div class="result-status" id="result-status">—</div>
       <p class="result-meta" id="result-meta">—</p>
+      <div class="result-pace" id="result-pace" hidden>
+        <p class="pace-verdict" id="pace-verdict" role="status">—</p>
+        <dl class="pace-grid">
+          <div class="pace-row"><dt>Tempo total usado</dt><dd id="pace-used">—</dd></div>
+          <div class="pace-row" id="pace-expected-row"><dt>Tempo esperado<small id="pace-expected-label"></small></dt><dd id="pace-expected">—</dd></div>
+          <div class="pace-row" id="pace-avg-row"><dt>Média por pergunta respondida</dt><dd id="pace-avg">—</dd></div>
+        </dl>
+        <p class="pace-note" id="pace-note"></p>
+      </div>
+      <p class="result-guess" id="result-guess" hidden></p>
       <button id="btn-new-test" class="btn btn-primary">Novo teste</button>
     </div>
     <h3 class="review-heading">Revisão, pergunta a pergunta</h3>
-    <p class="review-note">O número de página indicado refere-se à versão em PDF de cada diploma usada para preparar esta app. Se a tua cópia tiver uma paginação diferente, usa o artigo indicado (esse é sempre exato) para localizar o trecho.</p>
+    <p class="review-intro" id="review-intro">Cada pergunta indica a legislação, o artigo e a página onde está a resposta. Procura-a na tua cópia impressa antes de leres a explicação: é este o treino que conta.</p>
+    <details class="review-note">
+      <summary>Como encontrar a página indicada</summary>
+      <p>O número de página é o que está impresso na própria folha, não a posição da folha na pilha. Onde o encontras em cada documento:</p>
+      <ul>
+        <li><b>a)</b> DLR n.º 21/2024/M: canto inferior direito, «n/9».</li>
+        <li><b>b)</b> Portaria n.º 38/2013: topo da folha, páginas 605 a 608 do Diário da República.</li>
+        <li><b>c)</b> Código do Trabalho: rodapé, «Pág. N de 245». O Código propriamente dito começa na pág. 25; as folhas anteriores são a lei que o aprova.</li>
+        <li><b>d)</b> LTFP: rodapé, «Pág. N de 175». O DLR n.º 11/2018/M é um documento à parte: rodapé, «Pág. N de 21».</li>
+        <li><b>e)</b> Orgânica do ISSM: rodapé, «Pág. N de 16».</li>
+        <li><b>f)</b> Estatutos do ISSM (Portaria n.º 17/2017): topo da folha, número de página do Jornal Oficial (a primeira folha não mostra número).</li>
+      </ul>
+      <p>O artigo indicado é a referência mais segura. Se a tua impressão for de outra versão do texto, usa-o para localizar o trecho.</p>
+    </details>
     <div class="review-list" id="review-list"></div>
   </section>
 

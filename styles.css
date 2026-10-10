@@ -77,11 +77,11 @@ button{ font-family:inherit; }
 
 #app{ max-width:640px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
 .screen{ flex:1; display:flex; flex-direction:column; padding:20px 20px calc(20px + env(safe-area-inset-bottom)); }
-/* Author-origin CSS beats the UA stylesheet's [hidden]{display:none} at equal specificity,
-   so without this rule every .screen with the `hidden` attribute would still be laid out
-   (display:flex) and visible by scrolling - defeating the PIN gate. This restores "hidden
-   actually hides it", which is what keeps the other screens unreachable before the PIN. */
-.screen[hidden]{ display:none; }
+/* Author-origin CSS (display:flex, etc.) beats the UA stylesheet's [hidden]{display:none},
+   so without this rule an element with the `hidden` attribute could still be laid out and
+   visible - defeating the PIN gate. This restores "hidden actually hides it" for every element,
+   which keeps the other screens unreachable before the PIN. */
+[hidden]{ display:none !important; }
 
 /* ---------- buttons ---------- */
 .btn{
@@ -168,6 +168,16 @@ button{ font-family:inherit; }
 .mode-tile-label{ font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--ink); }
 .mode-tile-meta{ margin-top:6px; font-size:13px; color:var(--ink-soft); }
 
+/* Modo Livre: um bloco de largura total, com o contorno em ocre para se distinguir dos Treinos */
+.mode-livre{
+  display:block; width:100%; margin-top:12px; text-align:left; cursor:pointer;
+  background:var(--paper-raised); border:1.5px solid var(--accent); border-radius:var(--radius-m);
+  padding:16px; color:var(--ink);
+}
+.mode-livre:active{ transform:scale(.99); }
+.mode-livre-desc{ margin-top:6px; font-size:14px; line-height:1.5; color:var(--ink); }
+.mode-livre .mode-tile-meta{ margin-top:8px; }
+
 .modes-footnote{ margin-top:22px; color:var(--ink-soft); font-size:13px; line-height:1.5; }
 
 /* ===================================================================
@@ -183,6 +193,7 @@ button{ font-family:inherit; }
 }
 .timer.timer-warn{ background:var(--accent-tint); color:var(--accent); }
 .timer.timer-danger{ background:var(--wrong-tint); color:var(--wrong); }
+.timer.timer-up{ background:var(--accent-tint); color:var(--accent); }
 .quiz-progress{ margin-top:12px; font-size:13.5px; color:var(--ink-soft); }
 
 .palette{ margin-top:10px; display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
@@ -195,11 +206,37 @@ button{ font-family:inherit; }
 .palette-item.current{ outline:2.5px solid var(--accent); outline-offset:1.5px; }
 
 .quiz-body{ flex:1; padding-top:20px; }
-.question-tag{ font-size:13px; color:var(--accent); font-weight:600; }
 .question-text{
-  margin-top:8px; font-size:21px; line-height:1.4; color:var(--ink); font-weight:600;
+  margin-top:0; font-size:21px; line-height:1.4; color:var(--ink); font-weight:600;
 }
-.options{ margin-top:22px; display:flex; flex-direction:column; gap:10px; }
+
+/* ---------- palpite da legislação (só nos Treinos) ---------- */
+.guess-box{
+  margin-top:18px; padding:16px; border:1.5px solid var(--accent); border-radius:var(--radius-m);
+  background:var(--accent-tint);
+}
+.guess-title{ font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--ink); }
+.guess-sub{ margin-top:4px; font-size:13px; line-height:1.45; color:var(--ink-soft); }
+.guess-chips{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.guess-chip{
+  appearance:none; display:flex; align-items:flex-start; gap:10px; text-align:left; width:100%;
+  background:var(--paper-raised); color:var(--ink); border:1.5px solid var(--line); border-radius:var(--radius-s);
+  padding:11px 12px; font-size:14.5px; line-height:1.4; cursor:pointer;
+}
+.guess-chip:active{ transform:scale(.995); }
+.guess-letter{
+  flex:0 0 auto; min-width:22px; font-weight:700; color:var(--accent);
+}
+.guess-verdict{
+  margin-top:12px; padding:11px 12px; border-radius:var(--radius-s); font-size:14.5px; line-height:1.45; font-weight:600;
+}
+.guess-verdict.ok{ background:var(--correct-tint); color:var(--correct); }
+.guess-verdict.bad{ background:var(--wrong-tint); color:var(--wrong); }
+.guess-box.done .guess-title,
+.guess-box.done .guess-sub{ display:none; }
+.guess-box.done{ padding:0; border:none; background:transparent; margin-top:14px; }
+.guess-box.done .guess-verdict{ margin-top:0; }
+.options{ margin-top:18px; display:flex; flex-direction:column; gap:10px; }
 .option{
   display:flex; align-items:flex-start; gap:12px; text-align:left;
   background:var(--paper-raised); border:1.5px solid var(--line); border-radius:var(--radius-m);
@@ -216,6 +253,7 @@ button{ font-family:inherit; }
 
 .quiz-footer{ display:flex; align-items:center; gap:10px; padding-top:18px; }
 .quiz-footer .btn-text{ flex:1; text-align:center; }
+.is-free .quiz-footer .btn-text{ color:var(--primary-dark); font-weight:700; }
 
 /* ===================================================================
    Result screen
@@ -230,13 +268,39 @@ button{ font-family:inherit; }
 .result-status{ display:inline-block; margin-top:14px; padding:6px 16px; border-radius:999px; font-weight:700; font-size:13.5px; }
 .result-status.pass{ background:var(--correct-tint); color:var(--correct); }
 .result-status.fail{ background:var(--wrong-tint); color:var(--wrong); }
+.result-status.neutral{ background:rgba(243,245,241,.16); color:var(--on-brand-fill); }
 .result-meta{ margin-top:12px; font-size:13.5px; color:var(--on-brand-fill-softer); }
+/* Modo Livre: tempo total e comparação com o ritmo da prova real */
+.result-pace{
+  margin:18px auto 0; max-width:380px; padding-top:16px;
+  border-top:1px solid rgba(243,245,241,.22);
+}
+.pace-verdict{ display:inline-block; padding:6px 16px; border-radius:999px; font-weight:700; font-size:13.5px; }
+.pace-verdict.ok{ background:var(--correct-tint); color:var(--correct); }
+.pace-verdict.bad{ background:var(--wrong-tint); color:var(--wrong); }
+.pace-verdict.neutral{ background:rgba(243,245,241,.16); color:var(--on-brand-fill); }
+.pace-grid{ margin:14px 0 0; display:flex; flex-direction:column; gap:6px; text-align:left; font-size:14px; }
+.pace-row{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.pace-row dt{ color:var(--on-brand-fill-soft); }
+.pace-row dt small{ display:block; margin-top:1px; font-size:12px; color:var(--on-brand-fill-softer); }
+.pace-row dd{ margin:0; font-weight:700; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; }
+.pace-note{ margin-top:10px; font-size:12.5px; line-height:1.45; color:var(--on-brand-fill-softer); text-align:left; }
+.result-guess{ margin-top:10px; font-size:13.5px; color:var(--on-brand-fill-soft); line-height:1.45; }
 .result-hero .btn-primary{ margin-top:20px; background:var(--on-brand-fill); color:var(--brand-fill); }
 .result-hero .btn-primary:hover{ background:#fff; }
 
 .review-heading{ margin-top:28px; font-size:18px; color:var(--ink); }
-.review-note{ margin-top:6px; font-size:12.5px; color:var(--ink-soft); line-height:1.5; }
+.review-intro{ margin-top:6px; font-size:13.5px; color:var(--ink-soft); line-height:1.5; }
+.review-note{
+  margin-top:12px; border:1.5px solid var(--line); border-radius:var(--radius-m);
+  background:var(--paper-raised); padding:12px 14px; font-size:13.5px; color:var(--ink-soft); line-height:1.5;
+}
+.review-note summary{ cursor:pointer; font-weight:600; color:var(--ink); }
+.review-note p{ margin-top:8px; }
+.review-note ul{ margin:8px 0 0; padding-left:18px; }
+.review-note li{ margin-top:4px; }
 .review-list{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+.review-empty{ padding:16px; border:1.5px dashed var(--line); border-radius:var(--radius-m); color:var(--ink-soft); font-size:14px; line-height:1.5; }
 .review-item{ border:1.5px solid var(--line); border-radius:var(--radius-m); padding:16px; background:var(--paper-raised); }
 .review-item-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; }
 .review-tag{ font-size:12.5px; color:var(--accent); font-weight:600; flex:1 1 auto; min-width:0; line-height:1.4; }
@@ -249,6 +313,10 @@ button{ font-family:inherit; }
 .review-answer-row .lab{ color:var(--ink-soft); flex:0 0 auto; }
 .review-answer-row.correct .val{ color:var(--correct); font-weight:600; }
 .review-answer-row.incorrect .val{ color:var(--wrong); font-weight:600; }
+.review-guess{ margin-top:8px; font-size:13px; font-weight:600; }
+.review-guess.ok{ color:var(--correct); }
+.review-guess.bad{ color:var(--wrong); }
+.review-guess.none{ color:var(--ink-soft); font-weight:500; }
 .review-explanation{ margin-top:10px; font-size:13.5px; color:var(--ink-soft); line-height:1.5; border-top:1px dashed var(--line); padding-top:10px; }
 
 /* ===================================================================
@@ -259,7 +327,6 @@ button{ font-family:inherit; }
   display:flex; align-items:center; justify-content:center;
   padding:20px; z-index:50;
 }
-.modal-overlay[hidden]{ display:none; }
 .modal-card{
   width:100%; max-width:360px; background:var(--paper-raised);
   border-radius:var(--radius-l); padding:24px; box-shadow:var(--shadow);
